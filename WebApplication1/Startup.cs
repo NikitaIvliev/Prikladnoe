@@ -1,8 +1,5 @@
-﻿using Contracts;
-using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.HttpOverrides;
 using NLog;
-using System.Linq.Expressions;
 using WebApplication1.Extensions;
 
 namespace ShopApi;
@@ -24,8 +21,7 @@ public class Startup
         services.ConfigureCors();
         services.ConfigureIISIntegration();
         services.ConfigureLoggerService();
-        services.ConfigureSqlContext(Configuration);
-        services.ConfigureRepositoryManager();
+
         services.AddControllers();
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
@@ -58,32 +54,4 @@ public class Startup
             endpoints.MapControllers();
         });
     }
-    public interface IRepositoryBase<T>
-    {
-        IQueryable<T> FindAll(bool trackChanges);
-        IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression, bool
-       trackChanges);
-        void Create(T entity);
-        void Update(T entity);
-        void Delete(T entity);
-    }
 }
-[Route("[controller]")]
-[ApiController]
-public class WeatherForecastController : ControllerBase
-{
-    private readonly IRepositoryManager _repository;
-    public WeatherForecastController(IRepositoryManager repository)
-    {
-        _repository = repository;
-    }
-
-    [HttpGet]
-    public ActionResult<IEnumerable<string>> Get()
-    {
-        _repository.Company.AnyMethodFromCompanyRepository();
-        _repository.Employee.AnyMethodFromEmployeeRepository();
-        return new string[] { "value1", "value2" };
-    }
-}
-
