@@ -36,7 +36,7 @@ public class Startup
         services.AddControllers(config => {
             config.RespectBrowserAcceptHeader = true;
             config.ReturnHttpNotAcceptable = true;
-        })
+        }).AddNewtonsoftJson()
         .AddXmlDataContractSerializerFormatters()
         .AddCustomCSVFormatter();
     }
@@ -86,6 +86,9 @@ public class MappingProfile : Profile
         CreateMap<Employee, EmployeeDto>();
         CreateMap<CompanyForCreationDto, Company>();
         CreateMap<EmployeeForCreationDto, Employee>();
+        CreateMap<CompanyForUpdateDto, Company>();
+        CreateMap<EmployeeForUpdateDto, Employee>().ReverseMap();
+
     }
 }
 

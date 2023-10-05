@@ -18,7 +18,10 @@ namespace Repository
         : base(repositoryContext)
         {
         }
-
+        public void DeleteCompany(Company company)
+        {
+            Delete(company);
+        }
         public void AnyMethodFromCompanyRepository()
         {
            
@@ -40,6 +43,10 @@ namespace Repository
         .OrderBy(e => e.Name);
         public Employee GetEmployee(Guid companyId, Guid id, bool trackChanges) =>FindByCondition(e => e.CompanyId.Equals(companyId) && e.Id.Equals(id),trackChanges).SingleOrDefault();
 
+        public void DeleteEmployee(Employee employee)
+        {
+            Delete(employee);
+        }
         public EmployeeRepository(RepositoryContext repositoryContext)
         : base(repositoryContext)
         {
