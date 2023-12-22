@@ -2,9 +2,10 @@
 
 namespace WebApplication1.Controllers
 {
-    [ApiVersion("2.0")]
-    [Route("api/{v:apiversion}/companies")]
+
+    [Route("api/companies")]
     [ApiController]
+    [ApiExplorerSettings(GroupName = "v2")]
     public class CompaniesV2Controller : ControllerBase
     {
         private readonly IRepositoryManager _repository;

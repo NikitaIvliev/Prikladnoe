@@ -6,8 +6,10 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Models;
 using NLog;
 using System.Linq.Expressions;
+using System.Reflection;
 using WebApplication1.Extensions;
 
 namespace ShopApi;
@@ -59,6 +61,7 @@ public class Startup
         services.AddScoped<ValidationFilterAttribute>();
         services.AddScoped<ValidateCompanyExistsAttribute>();
         services.AddScoped<ValidateEmployeeForCompanyExistsAttribute>();
+        services.ConfigureSwagger();
         services.ConfigureJWT(Configuration);
         services.AddScoped<IAuthenticationManager, AuthenticationManager>();
     }
@@ -90,6 +93,13 @@ public class Startup
         {
             endpoints.MapControllers();
         });
+        app.UseSwagger();
+        app.UseSwaggerUI(s =>
+        {
+            s.SwaggerEndpoint("/swagger/v1/swagger.json", "Code Maze API v1");
+            s.SwaggerEndpoint("/swagger/v2/swagger.json", "Code Maze API v2");
+        });
+
     }
     public interface IRepositoryBase<T>
     {
@@ -123,5 +133,60 @@ public class MappingProfile : Profile
         CreateMap<EmployeeForUpdateDto, Employee>().ReverseMap();
 
     }
+}
+public static void ConfigureSwagger(this IServiceCollection services)
+{
+    services.AddSwaggerGen(s =>
+    {
+        s.SwaggerDoc("v1", new OpenApiInfo
+        {
+            Title = "Code Maze API",
+            Version = "v1",
+       Description = "CompanyEmployees API by CodeMaze",
+            TermsOfService = new Uri("https://example.com/terms"),
+            Contact = new OpenApiContact
+            {
+                Name = "John Doe",
+                Email = "John.Doe@gmail.com",
+                Url = new Uri("https://twitter.com/johndoe"),
+            },
+            License = new OpenApiLicense
+            {
+                Name = "CompanyEmployees API LICX",
+                Url = new Uri("https://example.com/license"),
+            }
+        });
+        /// <summary>
+        /// Получает список всех компаний
+        /// </summary>
+        /// <returns> Список компаний</returns>.
+        s.SwaggerDoc("v2", new OpenApiInfo { Title = "Code Maze API", Version = "v2" });
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    s.IncludeXmlComments(xmlPath);
+        s.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+        {
+            In = ParameterLocation.Header,
+            Description = "Place to add JWT with Bearer",
+            Name = "Authorization",
+            Type = SecuritySchemeType.ApiKey,
+            Scheme = "Bearer"
+        });
+        s.AddSecurityRequirement(new OpenApiSecurityRequirement()
+ {
+ {
+ new OpenApiSecurityScheme
+ {
+ Reference = new OpenApiReference
+{
+ Type = ReferenceType.SecurityScheme,
+Id = "Bearer"
+ },
+Name = "Bearer",
+ },
+ new List<string>()
+ }
+ });
+    });
 }
 

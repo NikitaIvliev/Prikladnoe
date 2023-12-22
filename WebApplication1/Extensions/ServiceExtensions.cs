@@ -9,6 +9,22 @@ using Microsoft.EntityFrameworkCore;
 
 namespace WebApplication1.Extensions
 {
+    public static void ConfigureSwagger(this IServiceCollection services)
+    {
+        services.AddSwaggerGen(s =>
+        {
+            s.SwaggerDoc("v1", new OpenApiInfo
+            {
+                Title = "Code Maze API",
+                Version = "v1"
+            });
+            s.SwaggerDoc("v2", new OpenApiInfo
+            {
+                Title = "Code Maze API",
+                Version = "v2"
+            });
+        });
+    }
     public static void ConfigureJWT(this IServiceCollection services, IConfiguration
  configuration)
     {
