@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Contracts;
 using Entities.DataTransferObjects;
 using Entities.Models;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -25,6 +26,8 @@ public class Startup
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
+        services.AddAuthentication();
+        services.ConfigureIdentity();
         services.ConfigureVersioning();
         services.ConfigureCors();
         services.ConfigureIISIntegration();
@@ -56,6 +59,8 @@ public class Startup
         services.AddScoped<ValidationFilterAttribute>();
         services.AddScoped<ValidateCompanyExistsAttribute>();
         services.AddScoped<ValidateEmployeeForCompanyExistsAttribute>();
+        services.ConfigureJWT(Configuration);
+        services.AddScoped<IAuthenticationManager, AuthenticationManager>();
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -69,6 +74,7 @@ public class Startup
         }
         app.ConfigureExceptionHandler(logger);
         app.UseHttpsRedirection();
+        app.UseAuthentication();
         app.UseStaticFiles();
         app.UseCors("CorsPolicy");
         app.UseForwardedHeaders(new ForwardedHeadersOptions
