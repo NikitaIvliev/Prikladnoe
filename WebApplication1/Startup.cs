@@ -3,6 +3,7 @@ using Entities.DataTransferObjects;
 using Entities.Models;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.Logging;
 using NLog;
 using System.Linq.Expressions;
@@ -24,6 +25,7 @@ public class Startup
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
+        services.ConfigureVersioning();
         services.ConfigureCors();
         services.ConfigureIISIntegration();
         services.ConfigureLoggerService();
@@ -91,6 +93,16 @@ public class Startup
         void Create(T entity);
         void Update(T entity);
         void Delete(T entity);
+    }
+    public static void ConfigureVersioning(this IServiceCollection services)
+    {
+        services.AddApiVersioning(opt =>
+        {
+            opt.ReportApiVersions = true;
+            opt.AssumeDefaultVersionWhenUnspecified = true;
+            opt.DefaultApiVersion = new ApiVersion(1, 0);
+            opt.ApiVersionReader = new HeaderApiVersionReader("api-version");
+        });
     }
 }
 public class MappingProfile : Profile
