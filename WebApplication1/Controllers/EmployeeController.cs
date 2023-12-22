@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Web.Http.ModelBinding;
 using Entities.RequestFeatures;
 using Newtonsoft.Json;
+using Contracts;
 
 namespace WebApplication1.Controllers
 {
@@ -16,13 +17,14 @@ namespace WebApplication1.Controllers
         private readonly IRepositoryManager _repository;
         private readonly ILoggerManager _logger;
         private readonly IMapper _mapper;
-        public EmployeesController(IRepositoryManager repository, ILoggerManager
-       logger,
-        IMapper mapper)
+        private readonly IDataShaper<EmployeeDto> _dataShaper;
+        public EmployeesController(IRepositoryManager repository, ILoggerManager logger,
+ IMapper mapper, IDataShaper<EmployeeDto> dataShaper)
         {
             _repository = repository;
             _logger = logger;
             _mapper = mapper;
+            dataShaper = dataShaper;
         }
 
 

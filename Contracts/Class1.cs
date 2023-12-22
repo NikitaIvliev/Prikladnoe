@@ -3,6 +3,7 @@ using Entities;
 using Entities.Models;
 using Entities.RequestFeatures;
 using System.ComponentModel.Design;
+using System.Dynamic;
 using static Contracts.Contracts;
 
 
@@ -59,5 +60,10 @@ namespace Contracts
         object GetEmployeesAsync(Guid companyId, Guid id, bool trackChanges);
         Task<PagedList<Employee>> GetEmployeesAsync(Guid companyId, EmployeeParameters employeeParameters, bool trackChanges);
     }
-    
+    public interface IDataShaper<T>
+    {
+        IEnumerable<ExpandoObject> ShapeData(IEnumerable<T> entities, string
+       fieldsString);
+        ExpandoObject ShapeData(T entity, string fieldsString);
+    }
 }

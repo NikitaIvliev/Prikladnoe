@@ -9,6 +9,7 @@ using static Contracts.Contracts;
 using Contracts;
 using Microsoft.EntityFrameworkCore;
 using Entities.RequestFeatures;
+using Repository.Extensions;
 
 namespace Repository
 {
@@ -49,16 +50,15 @@ namespace Repository
         public async Task<PagedList<Employee>> GetEmployeesAsync(Guid companyId,
  EmployeeParameters employeeParameters, bool trackChanges)
         {
-            var employees = await FindByCondition(e => e.CompanyId.Equals(companyId) &&
-           (e.Age
-            >= employeeParameters.MinAge && e.Age <= employeeParameters.MaxAge),
-           trackChanges)
-            .OrderBy(e => e.Name)
+            var employees = await FindByCondition(e => e.CompanyId.Equals(companyId),
+            trackChanges)
+            .FilterEmployees(employeeParameters.MinAge, employeeParameters.MaxAge)
+            .Search(employeeParameters.SearchTerm)
+            .Sort(employeeParameters.OrderBy)
             .ToListAsync();
-            
- return PagedList<Employee>
- .ToPagedList(employees, employeeParameters.PageNumber,
- employeeParameters.PageSize);
+            return PagedList<Employee>
+            .ToPagedList(employees, employeeParameters.PageNumber,
+            employeeParameters.PageSize);
         }
         public IEnumerable<Employee> GetEmployees(Guid companyId, bool trackChanges) =>
         FindByCondition(e => e.CompanyId.Equals(companyId), trackChanges)
